@@ -96,11 +96,20 @@ const App = () => {
         />
         <Route path="/verify-email" element={<EmailVerification />} />
 
-        <Route path="/forgot-password" element={<RedirectAuthenticatedUser>
-          <ForgotPasswordPage />
-        </RedirectAuthenticatedUser>} />
+        <Route
+          path="/forgot-password"
+          element={
+            <RedirectAuthenticatedUser>
+              <ForgotPasswordPage />
+            </RedirectAuthenticatedUser>
+          }
+        />
 
         <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+
+          {/* catch all other routes */}
+        <Route path="*"
+        element={<Navigate to='/' replace />} />
       </Routes>
       <Toaster />
     </div>

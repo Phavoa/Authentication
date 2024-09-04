@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "authentication": "file:..",
     "axios": "^1.7.5",
     "framer-motion": "^11.3.30",
     "lucide-react": "^0.436.0",
