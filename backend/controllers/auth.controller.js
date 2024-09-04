@@ -65,10 +65,12 @@ const verifyEmail = async (req, res) => {
         message: "Invalid or expired verification code",
       });
     }
-    user.isVerfied = true;
+    user.isVerified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpiresAt = undefined;
     await user.save();
+
+    generateTokenAndSetCookie(res, user._id);
 
     await sendWelcomeEmail(user.email, user.name);
 

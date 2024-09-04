@@ -3,63 +3,64 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Loader } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
+import toast from "react-hot-toast";
+
+
 
 const EmailVerification = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRef = useRef([]);
   const navigate = useNavigate();
 
-  const {verifyEmail, isLoading, error} = useAuthStore();
+  const { verifyEmail, isLoading, error } = useAuthStore();
 
+  const handleChange = (index, value) => {
+    const newCode = [...code];
 
- const handleChange = (index, value) => {
-  const newCode = [...code];
-  
-  if (value.length > 1) {
-    // Handle pasted content
-    const pastedCode = value.slice(0, 6).split("");
-    for (let i = 0; i < 6; i++) {
-      newCode[i] = pastedCode[i] || "";
+    if (value.length > 1) {
+      // Handle pasted content
+      const pastedCode = value.slice(0, 6).split("");
+      for (let i = 0; i < 6; i++) {
+        newCode[i] = pastedCode[i] || "";
+      }
+      setCode(newCode);
+      // Focus on the next input field
+      const nextIndex = pastedCode.length < 6 ? pastedCode.length : 5;
+      inputRef.current[nextIndex]?.focus();
+    } else {
+      // Handle single character input
+      newCode[index] = value;
+      setCode(newCode);
+      // Focus on the next input field if value is entered
+      if (value && index < 5) {
+        inputRef.current[index + 1]?.focus();
+      }
     }
-    setCode(newCode);
-    // Focus on the next input field
-    const nextIndex = pastedCode.length < 6 ? pastedCode.length : 5;
-    inputRef.current[nextIndex]?.focus();
-  } else {
-    // Handle single character input
-    newCode[index] = value;
-    setCode(newCode);
-    // Focus on the next input field if value is entered
-    if (value && index < 5) {
-      inputRef.current[index + 1]?.focus();
-    }
-  }
-};
+  };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const verificationCode = code.join('');
+    const verificationCode = code.join("");
     try {
       await verifyEmail(verificationCode);
-      navigate('/login')
+      toast.success("Email verified successully");
+      navigate("/");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-}
+  };
 
-useEffect(() => {
-    if(code.every(digit => digit !== '')) {
-        handleSubmit(new Event('submit'))
+  useEffect(() => {
+    if (code.every((digit) => digit !== "")) {
+      handleSubmit(new Event("submit"));
     }
-}, [code])
+  }, [code]);
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputRef.current[index - 1].focus();
     }
   };
-
-  
 
   return (
     <div className="max-w-md w-full bg-gray-bg bg-opacity-50 backdrop-blur-xs backdrop:filter rounded-2xl shadow-xl overflow-hidden">
@@ -91,7 +92,7 @@ useEffect(() => {
               />
             ))}
           </div>
-
+          {error && <p className="text-red-500 font-semibold mt-2">{error}</p>}
           <motion.button
             className="mt-5 w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:rinf-offset-2 focus:ring-offset-gray-900 transition duration-200"
             whileFocus={{ scale: 1.02 }}

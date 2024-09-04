@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import { connectDB } from "./db/connectDB.js";
 
@@ -13,8 +14,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  // methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 app.use(express.json()); // Middleware to parse JSON request bodies
-
 app.use(cookieParser()) // allows us to parse cookies
 
 app.use("/api/auth", authRouter);
